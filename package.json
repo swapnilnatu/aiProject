@@ -9,6 +9,7 @@
   "author": "<my-name> <<my-email-address>>",
   "license": "UNLICENSED",
   "dependencies": {
+    "chalk": "^1.1.3",
     "initai-dev-server": "^0.4.8",
     "initai-node": "~0.0.7"
   }
