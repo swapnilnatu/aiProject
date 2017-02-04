@@ -66,8 +66,19 @@ exports.handle = function handle(client) {
     },
   })
 
+
+  const handleWelocomeEvent = function (eventType, payload) {
+     client.addResponse('prompt/weather_city');
+    client.done();
+  };
+
   client.runFlow({
     classifications: {},
+     eventHandlers: {
+      // '*' Acts as a catch-all and will map all events not included in this
+      // object to the assigned function
+      'welcome:siya': handleWelocomeEvent,
+    },
     streams: {
       main: 'getWeather',
       getWeather: [collectCity, provideWeather],
