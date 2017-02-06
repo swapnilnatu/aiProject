@@ -8,71 +8,12 @@ exports.handle = function handle(client) {
  
  
 
-  const provideWeather = client.createStep({
-    satisfied() {
-      return false
-    },
-
-    prompt(callback) {
-      //getCurrentWeather(client.getConversationState().weatherCity.value, resultBody => {
-        // if (!resultBody || resultBody.cod !== 200) {
-        //   console.log('Error getting weather.')
-        //   callback()
-        //   return
-        // }
-
-        // const weatherDescription = (
-        //   resultBody.weather.length > 0 ?
-        //   resultBody.weather[0].description :
-        //   null
-        // )
-        const city = client.getConversationState().weatherCity.value;
-
-        client.updateConversationState({
-          weatherCity: undefined,
-        });
-
-        const weatherData = {
-          temperature: '86',
-          condition: 'rainy',
-          city: city,
-        };
-
-        console.log('sending real weather:', weatherData)
-        client.addResponse('provide_weather/current', weatherData)
-        client.done()
-        
-       
-      //})
-    },
-  })
-
-
-
-   const collectCity = client.createStep({
-    satisfied() {
-      return Boolean(client.getConversationState().weatherCity)
-    },
-
-    extractInfo() {
-     const city = client.getFirstEntityWithRole(client.getMessagePart(), 'city')
-      if (city) {
-        client.updateConversationState({
-          weatherCity: city,
-        })
-        console.log('User wants the weather in:', city.value)
-      }
-    },
-
-    prompt() {
-      client.addResponse('prompt/weather_city')
-      client.done()
-    },
-  })
+ 
 
 
 const collectUserName = client.createStep({
     satisfied() {
+         
       return Boolean(client.getConversationState().userFname)
     },
 
@@ -101,16 +42,38 @@ const collectHeight = client.createStep({
 
     extractInfo() {
      const userHeight = client.getFirstEntityWithRole(client.getMessagePart(), 'height')
-    
+    console.log('userHeight'+JSON.stringify( client.getFirstEntityWithRole(client.getMessagePart(), 'height')));
       if (userHeight) {
         client.updateConversationState({
-          userHeight: height
+          userHeight: userHeight
         })
       }
     },
 
     prompt() {
       client.addResponse('ask_vitals/height')
+      client.done()
+    },
+  })
+
+
+const collectWeight = client.createStep({
+    satisfied() {
+      return Boolean(client.getConversationState().userWeight);
+    },
+
+    extractInfo() {
+     const userWeight = client.getFirstEntityWithRole(client.getMessagePart(), 'weight')
+    
+      if (userWeight) {
+        client.updateConversationState({
+          userWeight: userWeight
+        })
+      }
+    },
+
+    prompt() {
+      client.addResponse('ask_vitals/weight')
       client.done()
     },
   })
@@ -135,8 +98,31 @@ const isPromtWelocome = client.createStep({
   })
 
 
+const promptNeedSomeInformation = client.createStep({
+    satisfied() {
+      return Boolean(client.getConversationState().isPromtNeedSomeInfo)
+    },
+
+    extractInfo() {
+    
+        
+
+  },
+
+    prompt() {
+
+      client.addResponse('prompt/need_some_information')
+
+      client.done()
+    },
+  })
 
 
+
+
+
+
+  
 
   const handleWelocomeEvent = function (eventType, payload) {
     client.updateConversationState({
@@ -150,7 +136,9 @@ const isPromtWelocome = client.createStep({
 
   client.runFlow({
     classifications: {
-     'prompt/welcome_siya':'getVital'
+     'prompt/welcome_siya':'promptMessage',
+     'ask_vitals/weight':'getWeight'
+
     },
      eventHandlers: {
       // '*' Acts as a catch-all and will map all events not included in this
@@ -158,8 +146,10 @@ const isPromtWelocome = client.createStep({
       'welcome:siya': handleWelocomeEvent
     },
     streams: {
-      main:'getVital',
-      getVital:[isPromtWelocome,collectUserName,collectHeight],
+      main:'promptMessage',
+      promptMessage:[isPromtWelocome,collectUserName,promptNeedSomeInformation,'getHeight'],
+      getHeight:[collectHeight,'getWeight'],
+      getWeight:[collectWeight]
       // getWeather: [collectCity, provideWeather],
     }
   })
