@@ -6,6 +6,7 @@ exports.handle = function handle(client) {
     const handleWelocomeEvent = function(eventType, payload) {
         client.updateConversationState({
             isWelecomePromt: true
+
         });
         client.addResponse('prompt/welcome_siya');
         client.addResponse('ask_user_detail/name');
@@ -23,7 +24,7 @@ exports.handle = function handle(client) {
         },
 
         extractInfo() {
-            const userHeight = client.getFirstEntityWithRole(client.getMessagePart(), 'height');
+            const userHeight = client.getFirstEntityWithRole(client.getMessagePart(), 'number/height');
             console.log('swapnil userHeight:' + userHeight);
             if (userHeight) {
                 client.updateConversationState({
@@ -33,8 +34,9 @@ exports.handle = function handle(client) {
         },
 
         prompt() {
+            client.addResponse('prompt/need_some_information',{fname:client.getConversationState().userFname.value});
             client.addResponse('ask_vitals/height')
-            client.done()
+            client.done();
         },
     });
 
@@ -56,24 +58,6 @@ exports.handle = function handle(client) {
     });
 
 
-    const promptNeedSomeInformation = client.createStep({
-        satisfied() {
-            return Boolean(client.getConversationState().isPromtNeedSomeInfo)
-        },
-
-        extractInfo() {
-
-
-
-        },
-
-        prompt() {
-
-            client.addResponse('prompt/need_some_information')
-
-            client.done()
-        },
-    });
 
     const collectUserName = client.createStep({
         satisfied() {
@@ -109,7 +93,7 @@ exports.handle = function handle(client) {
         },
 
         extractInfo() {
-            const userWeight = client.getFirstEntityWithRole(client.getMessagePart(), 'weight')
+            const userWeight = client.getFirstEntityWithRole(client.getMessagePart(), 'number/weight')
 
             if (userWeight) {
                 client.updateConversationState({
@@ -137,7 +121,7 @@ exports.handle = function handle(client) {
         },
         streams: {
             main: 'promptMessage',
-            promptMessage: [isPromtWelocome, collectUserName, promptNeedSomeInformation, 'getHeight'],
+            promptMessage: [isPromtWelocome, collectUserName, 'getHeight'],
             getHeight: [collectHeight, 'getWeight'],
             getWeight: [collectWeight]
                 // getWeather: [collectCity, provideWeather],
