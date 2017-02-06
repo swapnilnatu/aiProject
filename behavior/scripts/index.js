@@ -2,10 +2,8 @@
 
 exports.handle = function handle(client) {
     const handleWelocomeEvent = function(eventType, payload) {
-        
         client.updateConversationState({
             isWelecomePromt: true
-
         });
         client.addResponse('prompt/welcome_siya');
         client.addResponse('ask_user_detail/name');
