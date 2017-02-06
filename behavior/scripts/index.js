@@ -2,7 +2,7 @@
 
 exports.handle = function handle(client) {
     const handleWelocomeEvent = function(eventType, payload) {
-        client.resetConversationState();
+        
         client.updateConversationState({
             isWelecomePromt: true
 
@@ -105,7 +105,10 @@ exports.handle = function handle(client) {
         },
         streams: {
             main: 'promptMessage',
-            promptMessage: [isPromtWelocome, collectUserName, collectHeight, collectWeight]
+            promptMessage: [isPromtWelocome, 'getUserName'],
+            getUserName:[collectUserName, 'getHeight'],
+            getHeight:[collectHeight, 'getWeather'],
+            getWeight:[collectWeight]
                 // getWeather: [collectCity, provideWeather],
         }
     })
