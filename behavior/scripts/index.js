@@ -1,10 +1,8 @@
 'use strict'
 
 exports.handle = function handle(client) {
-
-
     const handleWelocomeEvent = function(eventType, payload) {
-      client.resetConversationState();
+        client.resetConversationState();
         client.updateConversationState({
             isWelecomePromt: true
 
@@ -14,11 +12,6 @@ exports.handle = function handle(client) {
         client.done();
 
     };
-
-
-
-   
-
     const collectHeight = client.createStep({
         satisfied() {
             return Boolean(client.getConversationState().userHeight);
@@ -35,14 +28,11 @@ exports.handle = function handle(client) {
         },
 
         prompt() {
-           
+
             client.addResponse('ask_vitals/height')
             client.done();
         },
     });
-
-
-
 
     const isPromtWelocome = client.createStep({
         satisfied() {
@@ -58,11 +48,9 @@ exports.handle = function handle(client) {
         },
     });
 
-
-
     const collectUserName = client.createStep({
         satisfied() {
-          console.log(client.getConversationState().userFname);
+            console.log(client.getConversationState().userFname);
             return Boolean(client.getConversationState().userFname)
         },
 
@@ -82,11 +70,6 @@ exports.handle = function handle(client) {
             client.done()
         },
     });
-
-
-
-
-
 
     const collectWeight = client.createStep({
         satisfied() {
@@ -122,7 +105,7 @@ exports.handle = function handle(client) {
         },
         streams: {
             main: 'promptMessage',
-            promptMessage: [isPromtWelocome, collectUserName, collectHeight,collectWeight]
+            promptMessage: [isPromtWelocome, collectUserName, collectHeight, collectWeight]
                 // getWeather: [collectCity, provideWeather],
         }
     })
