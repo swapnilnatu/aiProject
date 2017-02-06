@@ -5,6 +5,7 @@
 
 exports.handle = function handle(client) {
     const handleWelocomeEvent = function(eventType, payload) {
+        client.resetConversationState();
         client.updateConversationState({
             isWelecomePromt: true
         });
@@ -24,7 +25,7 @@ exports.handle = function handle(client) {
         },
 
 
-        
+
 
         extractInfo() {
             const userHeight = client.getFirstEntityWithRole(client.getMessagePart(), 'number/height');
@@ -36,9 +37,9 @@ exports.handle = function handle(client) {
             }
         },
 
-        prompt() {
-
-            client.addResponse('ask_vitals/height')
+        prompt() {  
+            client.addResponse('prompt/need_some_information',{fname:client.getConversationState().userFname.value});
+            client.addResponse('ask_vitals/height');
             client.done();
         },
     });
@@ -116,7 +117,7 @@ exports.handle = function handle(client) {
             main: 'promptMessage',
             promptMessage: [isPromtWelocome, 'getUserName'],
             getUserName: [collectUserName, 'getHeight'],
-            getHeight: [collectHeight, 'getWeather'],
+            getHeight: [collectHeight, 'getWeight'],
             getWeight: [collectWeight]
                 // getWeather: [collectCity, provideWeather],
         }
