@@ -1,5 +1,8 @@
 'use strict'
 
+
+
+
 exports.handle = function handle(client) {
     const handleWelocomeEvent = function(eventType, payload) {
         client.updateConversationState({
@@ -10,10 +13,18 @@ exports.handle = function handle(client) {
         client.done();
 
     };
+
+
+
+
+
     const collectHeight = client.createStep({
         satisfied() {
             return Boolean(client.getConversationState().userHeight);
         },
+
+
+        
 
         extractInfo() {
             const userHeight = client.getFirstEntityWithRole(client.getMessagePart(), 'number/height');
@@ -104,9 +115,9 @@ exports.handle = function handle(client) {
         streams: {
             main: 'promptMessage',
             promptMessage: [isPromtWelocome, 'getUserName'],
-            getUserName:[collectUserName, 'getHeight'],
-            getHeight:[collectHeight, 'getWeather'],
-            getWeight:[collectWeight]
+            getUserName: [collectUserName, 'getHeight'],
+            getHeight: [collectHeight, 'getWeather'],
+            getWeight: [collectWeight]
                 // getWeather: [collectCity, provideWeather],
         }
     })
