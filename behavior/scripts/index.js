@@ -1,8 +1,5 @@
 'use strict'
 
-
-
-
 exports.handle = function handle(client) {
     const handleWelocomeEvent = function(eventType, payload) {
         client.resetConversationState();
@@ -15,17 +12,10 @@ exports.handle = function handle(client) {
 
     };
 
-
-
-
-
     const collectHeight = client.createStep({
         satisfied() {
             return Boolean(client.getConversationState().userHeight);
         },
-
-
-
 
         extractInfo() {
             const userHeight = client.getFirstEntityWithRole(client.getMessagePart(), 'number/height');
