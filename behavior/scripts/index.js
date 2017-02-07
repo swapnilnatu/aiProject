@@ -8,6 +8,7 @@ exports.handle = function handle(client) {
         });
         client.addResponse('prompt/welcome_siya');
         client.addResponse('ask_user_detail/name');
+        client.expect('getHeight',['provide_name/patient_name']);
         client.done();
 
     };
@@ -30,6 +31,7 @@ exports.handle = function handle(client) {
         prompt() {  
             client.addResponse('prompt/need_some_information',{fname:client.getConversationState().userFname.value});
             client.addResponse('ask_vitals/height');
+            client.expect('getWeight',['provide_vital/height']);
             client.done();
         },
     });
@@ -93,21 +95,19 @@ exports.handle = function handle(client) {
     });
 
     client.runFlow({
-        classifications: {
-            'prompt/welcome_siya': 'promptMessage',
-            'ask_vitals/weight': 'getWeight'
-
-        },
         eventHandlers: {
             // '*' Acts as a catch-all and will map all events not included in this
             // object to the assigned function
-            'welcome:siya': handleWelocomeEvent
+            'welcome:siya': handleWelocomeEvent,
+            'getHeight':'getHeight',
+            'getWeight':'getWeight'
+
         },
         streams: {
             main: 'promptMessage',
-            promptMessage: [isPromtWelocome, 'getUserName'],
-            getUserName: [collectUserName, 'getHeight'],
-            getHeight: [collectHeight, 'getWeight'],
+            promptMessage: [isPromtWelocome,'getUserName'],
+            getUserName: [collectUserName],
+            getHeight: [collectHeight],
             getWeight: [collectWeight]
                 // getWeather: [collectCity, provideWeather],
         }
